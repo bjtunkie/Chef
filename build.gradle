@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id 'idea'
+    id 'maven-publish'
+}
+
+group = 'com.lib'
+version = '0.1'
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+repositories {
+    mavenCentral()
+    maven {
+        def repoUrl = "${buildDir}/repos"
+        url = version.endsWith('SNAPSHOT') ? "${repoUrl}/snapshots" : "${repoUrl}/releases"
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "${group}"
+            artifactId = "commlib"
+            version = "${version}"
+
+            from components.java
+        }
+    }
+}
+
+
+dependencies {
+
+}
