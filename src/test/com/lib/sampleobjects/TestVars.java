@@ -1,4 +1,4 @@
-package com.lib;
+package com.lib.sampleobjects;
 
 public class TestVars {
 

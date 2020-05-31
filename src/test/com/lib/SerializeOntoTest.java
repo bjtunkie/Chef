@@ -1,7 +1,7 @@
 package com.lib;
 
 
-import com.lib.test.SimpleObject;
+import com.lib.sampleobjects.SimpleObject;
 
 import java.nio.ByteBuffer;
 
@@ -15,12 +15,15 @@ public class SerializeOntoTest {
 
     public static void test1() {
         SimpleObject simpleObject = new SimpleObject();
-        simpleObject.set(12, 95);
+
+
+//        simpleObject.simpleObject = new SimpleObject();
+//        simpleObject.simpleObject.set((byte) 11);
         Chef chef = new Chef();
         byte[] data = chef.serialize(simpleObject);
 
         ByteBuffer buf = ByteBuffer.wrap(data);
-        System.out.println(buf.getInt());
-        System.out.println(buf.getInt());
+        System.out.println(buf.get());
+        System.out.println(buf.get());
     }
 }

@@ -1,41 +1,34 @@
 package com.lib;
 
+import com.lib.proto.ChefDeSerializer;
 import com.lib.proto.ChefMap;
-import com.lib.proto.ChefSpace;
+import com.lib.proto.ChefSerializer;
 
-import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 
-public class Chef extends ChefSpace {
+public class Chef {
 
-    ChefMap cache = new ChefMap();
 
-    public void Chef() {
+    private final ChefSerializer serializer;
+    private final ChefDeSerializer deSerializer;
 
+    public Chef() {
+        final ChefMap cache = new ChefMap();
+        serializer = new ChefSerializer(cache);
+        deSerializer = new ChefDeSerializer(cache);
     }
 
 
     public <T> byte[] serialize(T input) {
         byte[] bytes = new byte[1024 * 1024 * 1];
-
-        Class<?> k = input.getClass();
-        Field[] fields = cache.getMapping(k);
-        try {
-            int offset = 0;
-            for (Field field : fields) {
-                Class<?> clazz = field.getType();
-                Object valueAtField = field.get(input);
-                offset = serializeOnto(valueAtField, clazz, bytes, offset);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        return bytes;
+        int count = serializer.serialize(input, bytes, 0);
+        byte[] arr = new byte[count];
+        System.arraycopy(bytes, 0, arr, 0, count);
+        return arr;
     }
 
     public <T> T deSerialize(byte[] array, Class<T> clazz) {
-        return null;
+        return (T) deSerializer.deSerialize(ByteBuffer.wrap(array), clazz);
     }
 
 

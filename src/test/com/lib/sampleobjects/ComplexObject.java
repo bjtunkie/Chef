@@ -1,4 +1,4 @@
-package com.lib.test;
+package com.lib.sampleobjects;
 
 public class ComplexObject {
 }
