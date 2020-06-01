@@ -1,5 +1,6 @@
 package com.lib.proto;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -11,8 +12,7 @@ public class ChefDeSerializer implements ChefTool {
         this.cache = cache;
     }
 
-
-    public <T> T deSerialize(ByteBuffer buf, Class<T> clazz) {
+    public <T> T deSerialize(ByteBuffer buf, Field[] fields, Class<T> clazz) {
 
         T instance = null;
         try {
@@ -20,89 +20,99 @@ public class ChefDeSerializer implements ChefTool {
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
-        Field[] fields = cache.getMapping(clazz);
-        for (Field field : fields) {
-            int position = buf.position();
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
             Class<?> type = field.getType();
             Object valueAtField = deSerializeObject(buf, type);
-            if (valueAtField == null && position == buf.position()) { // Means that the 'class Type' is neither of basic datatype nor a String object
-                valueAtField = deSerialize(buf, type);
-            }
+
             try {
                 field.set(instance, valueAtField);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-
         }
+
         return instance;
     }
 
-    private Object deSerializeObject(ByteBuffer buf, Class<?> baseclass) {
+    public <M> M deSerialize(ByteBuffer buf, Class<M> k) {
 
-        if (baseclass.isArray()) {
-            return deSerializeArray(buf, baseclass.getComponentType());
-        } else {
-            return deSerializeSingleObject(buf, baseclass);
-        }
+        Field[] fields = cache.getMapping(k);
+        int size = buf.getInt();
+        if (size == 0) return null;
+        return deSerialize(buf, fields, k);
     }
 
-    private Object deSerializeSingleObject(ByteBuffer buf, Class<?> baseClass) {
+    private <M> Object deSerializeObject(ByteBuffer buf, Class<M> k) {
 
-        if (int.class == baseClass || Integer.class == baseClass) {
-            return buf.getInt();
-        } else if (long.class == baseClass || Long.class == baseClass) {
-            return buf.getLong();
-        } else if (char.class == baseClass || Character.class == baseClass) {
-            return buf.getChar();
-        } else if (float.class == baseClass || Float.class == baseClass) {
-            return buf.getFloat();
-        } else if (double.class == baseClass || Double.class == baseClass) {
-            return buf.getDouble();
-        } else if (short.class == baseClass || Short.class == baseClass) {
-            return buf.getShort();
-        } else if (byte.class == baseClass || Byte.class == baseClass) {
-            return buf.get();
-        } else if (boolean.class == baseClass || Boolean.class == baseClass) {
-            return buf.get() > 0;
-        } else if (String.class == baseClass) {
-            int numberOfBytes = buf.getInt();
-            int pos = buf.position();
-            String x = new String(buf.array(), pos, numberOfBytes);
-            buf.position(pos + numberOfBytes);
-            return x;
+        final Class<?> baseClass;
+        if (k.isArray()) {
+
+            int lengthOfArray = buf.getInt();
+            if (lengthOfArray == 0) {
+                return null;
+            }
+
+            baseClass = k.getComponentType();
+
+
+            if (int.class == baseClass) {
+
+                int[] x = new int[lengthOfArray];
+                for (int i = 0; i < lengthOfArray; i++) {
+                    x[i] = buf.getInt();
+                }
+
+                return x;
+            } else if (Integer.class == baseClass) {
+                Integer[] x = new Integer[lengthOfArray];
+                for (int i = 0; i < lengthOfArray; i++) {
+                    x[i] = buf.getInt();
+                }
+                return x;
+
+            } else {
+                Field[] fields = cache.getMapping(baseClass);
+                M[] instance = (M[]) Array.newInstance(baseClass, lengthOfArray);
+                for (int i = 0; i < lengthOfArray; i++) {
+                    instance[i] = (M) deSerialize(buf, fields, baseClass);
+                }
+
+                return instance;
+            }
         } else {
-            int x = isSerNull(buf.array(), buf.position());
-            if (x > 0) {
-                buf.position(x);
+            baseClass = k;
+
+            if (int.class == baseClass || Integer.class == baseClass) {
+                return buf.getInt();
+            } else if (long.class == baseClass || Long.class == baseClass) {
+                return buf.getLong();
+            } else if (char.class == baseClass || Character.class == baseClass) {
+                return buf.getChar();
+            } else if (float.class == baseClass || Float.class == baseClass) {
+                return buf.getFloat();
+            } else if (double.class == baseClass || Double.class == baseClass) {
+                return buf.getDouble();
+            } else if (short.class == baseClass || Short.class == baseClass) {
+                return buf.getShort();
+            } else if (byte.class == baseClass || Byte.class == baseClass) {
+                return buf.get();
+            } else if (boolean.class == baseClass || Boolean.class == baseClass) {
+                return buf.get() > 0;
+            } else {
+                int sizeOfObject = buf.getInt();
+                if (sizeOfObject == 0) {
+                    // null object
+                    return null;
+                }
+                Field[] fields = cache.getMapping(baseClass);
+                return deSerialize(buf, fields, baseClass);
+
             }
-            /**
-             * Surely of unknown Type
-             */
-            return null;
         }
-    }
 
-
-    private Object deSerializeArray(ByteBuffer buf, Class<?> baseClass) {
-
-        int lengthOfArray = buf.getInt();
-
-        if (int.class == baseClass) {
-            int[] x = new int[lengthOfArray];
-            for (int i = 0; i < lengthOfArray; i++) {
-                x[i] = buf.getInt();
-            }
-
-            return x;
-        } else if (Integer.class == baseClass) {
-            Integer[] x = new Integer[lengthOfArray];
-            for (int i = 0; i < lengthOfArray; i++) {
-                x[i] = buf.getInt();
-            }
-            return x;
-
-        } else if (long.class == baseClass) {
+        /*
+        else if (long.class == baseClass) {
             long[] x = new long[lengthOfArray];
             for (int i = 0; i < lengthOfArray; i++) {
                 x[i] = buf.getLong();
@@ -168,16 +178,11 @@ public class ChefDeSerializer implements ChefTool {
             }
             return x;
 
-        } else {
-            int x = isSerNull(buf.array(), buf.position());
-            if (x > 0) {
-                buf.position(x);
-            }
-            /**
-             * Surely of Unknown Type
-             */
-            return null;
         }
 
+        */
+
     }
+
+
 }

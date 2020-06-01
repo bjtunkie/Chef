@@ -13,9 +13,9 @@ public class SerializeSimpleObjectTest {
         SimpleObject o = new SimpleObject();
 
 
-        Chef chef = new Chef();
-        byte[] bytes = chef.serialize(o);
-        SimpleObject object = chef.deSerialize(bytes, SimpleObject.class);
+        Chef chef = new DefaultChef();
+        byte[] bytes = chef.serialize(o, 0);
+        SimpleObject object = chef.deSerialize(bytes, SimpleObject.class, 0);
 
         Gson gson = (new GsonBuilder()).setPrettyPrinting().create();
         String data = gson.toJson(object);
@@ -23,7 +23,7 @@ public class SerializeSimpleObjectTest {
 
 
         ByteBuffer buf = ByteBuffer.wrap(bytes);
-        for(int i = 0 ; i <7; i++) {
+        for (int i = 0; i < 7; i++) {
             System.out.print(buf.getInt() + " .... ");
         }
 

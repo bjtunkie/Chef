@@ -2,22 +2,22 @@ package com.lib;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lib.sampleobjects.ModerateObject;
+import com.lib.sampleobjects.ComplexObject;
 
 import java.nio.ByteBuffer;
 
-public class SerializeModerateObjectTest {
+public class SerializeComplexObjectTest {
     public static void main(String... args) {
 
 
-        Object o = new ModerateObject(15);
-        ((ModerateObject) o).setM(new ModerateObject(45));
+        ComplexObject o = new ComplexObject();
+        o.add("surya");
 
 
         Chef chef = new DefaultChef();
-        byte[] bytes = chef.serialize(o,0);
+        byte[] bytes = chef.serialize(o, 0);
 
-        ModerateObject object = chef.deSerialize(bytes, ModerateObject.class,0);
+        ComplexObject object = chef.deSerialize(bytes, ComplexObject.class,0);
 
 
         ByteBuffer buf = ByteBuffer.wrap(bytes);

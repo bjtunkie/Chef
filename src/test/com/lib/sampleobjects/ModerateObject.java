@@ -16,4 +16,5 @@ public class ModerateObject {
     public void setM(ModerateObject m) {
         this.m = m;
     }
+
 }

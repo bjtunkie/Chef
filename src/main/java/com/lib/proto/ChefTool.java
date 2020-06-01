@@ -1,26 +1,18 @@
 package com.lib.proto;
 
 public interface ChefTool {
-    int MAGIC_NUMBER_FOR_NULL = 3;
 
-    default int serNull(byte[] dst, int offset) {
-        offset = serInt(MAGIC_NUMBER_FOR_NULL, dst, offset);
-        for (int i = 0; i < MAGIC_NUMBER_FOR_NULL; i++) {
-            dst[i + offset] = Byte.MIN_VALUE;
-        }
-        return offset + MAGIC_NUMBER_FOR_NULL;
+    default int writeNull(byte[] dst, int offset) {
+        return serInt(0, dst, offset);
 
     }
 
-    default int isSerNull(byte[] src, int offset) {
-        if (src[offset + 3] == MAGIC_NUMBER_FOR_NULL) {
-            boolean x = true;
-            for (int i = (offset + 4), len = (i + MAGIC_NUMBER_FOR_NULL); i < len; i++) {
-                if (src[i] != Byte.MIN_VALUE) x = false;
-            }
-            return x ? (offset + 4 + MAGIC_NUMBER_FOR_NULL) : -1;
-        }
-        return -1;
+    default boolean isZero(byte[] src, int offset) {
+        return (src[offset] == 0
+                && src[offset + 1] == 0
+                && src[offset + 2] == 0
+                && src[offset + 3] == 0
+        );
     }
 
     default int serInt(int input, byte[] dst, int offset) {

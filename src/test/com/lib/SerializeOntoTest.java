@@ -19,8 +19,8 @@ public class SerializeOntoTest {
 
 //        simpleObject.simpleObject = new SimpleObject();
 //        simpleObject.simpleObject.set((byte) 11);
-        Chef chef = new Chef();
-        byte[] data = chef.serialize(simpleObject);
+        Chef chef = new DefaultChef();
+        byte[] data = chef.serialize(simpleObject, 0);
 
         ByteBuffer buf = ByteBuffer.wrap(data);
         System.out.println(buf.get());
