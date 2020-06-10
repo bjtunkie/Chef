@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'com.lib'
+group = 'com.chat'
 version = '0.1'
 sourceCompatibility = '11'
 targetCompatibility = '11'
@@ -21,7 +21,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = "${group}"
-            artifactId = "commlib"
+            artifactId = "chef"
             version = "${version}"
 
             from components.java
@@ -33,3 +33,8 @@ publishing {
 dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 }
+
+/*
+        ./gradlew clean PublishToMavenLocal
+*/
+

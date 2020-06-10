@@ -1,8 +1,8 @@
-package com.lib;
+package com.chat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.lib.sampleobjects.SimpleObject;
+import com.chat.sampleobjects.SimpleObject;
 
 import java.nio.ByteBuffer;
 

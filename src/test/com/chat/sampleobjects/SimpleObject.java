@@ -1,4 +1,4 @@
-package com.lib.sampleobjects;
+package com.chat.sampleobjects;
 
 public class SimpleObject {
 

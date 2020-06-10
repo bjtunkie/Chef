@@ -1,4 +1,4 @@
-package com.lib.proto;
+package com.chat.proto;
 
 public interface ChefTool {
 

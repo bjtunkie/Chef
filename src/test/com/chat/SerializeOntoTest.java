@@ -1,7 +1,7 @@
-package com.lib;
+package com.chat;
 
 
-import com.lib.sampleobjects.SimpleObject;
+import com.chat.sampleobjects.SimpleObject;
 
 import java.nio.ByteBuffer;
 

@@ -1,4 +1,4 @@
-package com.lib.sampleobjects;
+package com.chat.sampleobjects;
 
 import java.util.LinkedList;
 import java.util.List;

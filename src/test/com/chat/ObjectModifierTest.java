@@ -1,6 +1,6 @@
-package com.lib;
+package com.chat;
 
-import com.lib.sampleobjects.ModifierObject;
+import com.chat.sampleobjects.ModifierObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

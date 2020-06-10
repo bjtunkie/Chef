@@ -1,9 +1,8 @@
-package com.lib.proto;
+package com.chat.proto;
 
-import com.lib.exception.YetToImplementException;
+import com.chat.exception.YetToImplementException;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 public class ChefSerializer implements ChefTool {
 

@@ -1,4 +1,4 @@
-package com.lib;
+package com.chat;
 
 
 public class ChefTest {

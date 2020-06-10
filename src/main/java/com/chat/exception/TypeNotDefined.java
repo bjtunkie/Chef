@@ -1,4 +1,4 @@
-package com.lib.exception;
+package com.chat.exception;
 
 public class TypeNotDefined extends RuntimeException{
     public TypeNotDefined() {

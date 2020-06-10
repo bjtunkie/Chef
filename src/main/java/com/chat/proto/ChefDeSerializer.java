@@ -1,4 +1,4 @@
-package com.lib.proto;
+package com.chat.proto;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

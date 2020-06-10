@@ -1,4 +1,4 @@
-package com.lib.exception;
+package com.chat.exception;
 
 public class YetToImplementException extends RuntimeException {
     public YetToImplementException() {
